@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Your Cart{% endblock %}
+{% block content %}
+<h2>Your Cart</h2>
+{% if items %}
+<table style="width:100%;border-collapse:collapse">
+  <tr><th>Product</th><th>Qty</th><th>Price</th><th></th></tr>
+  {% for it in items %}
+  <tr>
+    <td>{{ it.product.name }}</td>
+    <td>
+      <form method="post" action="{% url 'update_cart' it.id %}">{% csrf_token %}
+        <input type="number" name="quantity" value="{{ it.quantity }}" min="0" style="width:70px">
+        <button class="btn light" type="submit">Update</button>
+      </form>
+    </td>
+    <td>₹{{ it.product.price|floatformat:2 }}</td>
+    <td><a href="{% url 'remove_cart' it.id %}">Remove</a></td>
+  </tr>
+  {% endfor %}
+</table>
+<div style="margin-top:12px">Total: <strong>₹{{ total }}</strong></div>
+<form method="post" action="{% url 'checkout' %}">{% csrf_token %}<button class="btn" type="submit">Checkout</button></form>
+{% else %}<p>Your cart is empty.</p>{% endif %}
+{% endblock %}
